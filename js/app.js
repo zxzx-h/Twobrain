@@ -27,7 +27,93 @@ const App = {
     ReminderEngine.start(this.tasks, (info) => this._onReminder(info));
     this._registerSW();
     this._setupBrowserGuide();
+    this._setupInstallPrompt();
   },
+
+  // ─── 安装应用 ───────────────────────────────
+
+  _setupInstallPrompt() {
+    const btn = document.getElementById('btnInstall');
+    if (!btn) return;
+
+    // 已安装则不再显示按钮
+    const isStandalone = window.matchMedia('(display-mode: standalone)').matches
+                      || navigator.standalone;
+    if (isStandalone) return;
+
+    // 监听 Chrome 的安装事件
+    window.addEventListener('beforeinstallprompt', (e) => {
+      e.preventDefault();
+      this._installPrompt = e;
+      btn.classList.remove('hidden');
+      btn.classList.add('btn-install--pulse');
+    });
+
+    // 点击安装
+    btn.addEventListener('click', () => {
+      if (this._installPrompt) {
+        this._installPrompt.prompt();
+        this._installPrompt.userChoice.then((choice) => {
+          if (choice.outcome === 'accepted') {
+            btn.classList.add('hidden');
+            this._showToast('🎉 安装成功！');
+          }
+          this._installPrompt = null;
+        });
+        return;
+      }
+
+      // iOS 回退：显示引导
+      if (/iPhone|iPad|iPod/.test(navigator.userAgent)) {
+        this._showIosInstallGuide();
+      }
+    });
+
+    // iOS 上提前显示按钮（因为 beforeinstallprompt 不会触发）
+    if (/iPhone|iPad|iPod/.test(navigator.userAgent) && !isStandalone) {
+      btn.classList.remove('hidden');
+      // iOS 没有 beforeinstallprompt，点击后显示引导
+    }
+
+    // 监听安装完成
+    window.addEventListener('appinstalled', () => {
+      btn.classList.add('hidden');
+      this._installPrompt = null;
+      this._showToast('✅ Twobrain 已安装到桌面！');
+    });
+  },
+
+  _showIosInstallGuide() {
+    // 创建一个轻量引导 toast
+    const guide = document.createElement('div');
+    guide.className = 'ios-guide';
+    guide.innerHTML = `
+      <div class="ios-guide-card">
+        <div class="ios-guide-step">
+          <span class="ios-guide-icon">1️⃣</span>
+          <span>点击底部 <strong>分享</strong> 按钮</span>
+        </div>
+        <div class="ios-guide-arrow">↓</div>
+        <div class="ios-guide-step">
+          <span class="ios-guide-icon">2️⃣</span>
+          <span>向下滚动，点 <strong>添加到主屏幕</strong></span>
+        </div>
+        <div class="ios-guide-arrow">↓</div>
+        <div class="ios-guide-step">
+          <span class="ios-guide-icon">3️⃣</span>
+          <span>点右上角 <strong>添加</strong></span>
+        </div>
+        <button class="ios-guide-close">我知道了</button>
+      </div>`;
+    document.body.appendChild(guide);
+
+    guide.querySelector('.ios-guide-close').onclick = () => guide.remove();
+    guide.addEventListener('click', (e) => {
+      if (e.target === guide) guide.remove();
+    });
+  },
+
+  _installPrompt: null,
 
   // ─── 浏览器引导 ─────────────────────────────
 

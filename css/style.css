@@ -93,6 +93,39 @@ body {
   background: rgba(0,0,0,.1);
 }
 
+/* ── Install Button ─────────────────────── */
+
+.btn-install {
+  height: 36px;
+  padding: 0 14px;
+  border: none;
+  border-radius: 18px;
+  background: #4E342E;
+  color: #FFF;
+  font-size: 0.82rem;
+  font-weight: 600;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: all 0.2s;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+.btn-install.hidden {
+  display: none;
+}
+.btn-install:active {
+  transform: scale(0.95);
+  background: #3E2723;
+}
+.btn-install--pulse {
+  animation: installPulse 1.5s ease-in-out infinite;
+}
+@keyframes installPulse {
+  0%, 100% { box-shadow: 0 0 0 0 rgba(78, 52, 46, 0.4); }
+  50%      { box-shadow: 0 0 0 8px rgba(78, 52, 46, 0); }
+}
+
 /* ── Input Panel ─────────────────────────── */
 
 .input-wrapper {
@@ -496,6 +529,60 @@ body {
   }
 }
 
+/* ── iOS Install Guide ────────────────── */
+
+.ios-guide {
+  position: fixed;
+  inset: 0;
+  z-index: 10002;
+  background: rgba(0,0,0,.55);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  backdrop-filter: blur(4px);
+}
+.ios-guide-card {
+  background: #FFFEF9;
+  border-radius: 20px;
+  padding: 24px 20px;
+  max-width: 320px;
+  width: 100%;
+  text-align: center;
+  box-shadow: 0 12px 40px rgba(0,0,0,.25);
+  animation: cardSlideUp 0.25s;
+}
+.ios-guide-step {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  text-align: left;
+  font-size: 0.95rem;
+  color: #3E2723;
+  padding: 8px 0;
+}
+.ios-guide-icon {
+  font-size: 1.5rem;
+  flex-shrink: 0;
+}
+.ios-guide-arrow {
+  color: #A1887F;
+  font-size: 1.2rem;
+  margin: 2px 0 2px 18px;
+}
+.ios-guide-close {
+  margin-top: 16px;
+  height: 40px;
+  padding: 0 24px;
+  border: none;
+  border-radius: 20px;
+  background: #4E342E;
+  color: #FFF;
+  font-size: 0.9rem;
+  font-weight: 600;
+  cursor: pointer;
+}
+
 /* ── Edit Overlay ─────────────────────── */
 
 .edit-overlay {
@@ -793,6 +880,7 @@ body {
   .input-title::placeholder { color: #8D6E63; }
 
   .btn-add { background: #8D6E63; }
+  .btn-install { background: #8D6E63; }
 
   .card-title, .card-time, .card-countdown { color: #3E2723; }
   /* 便利贴保持亮色 — 对比背景更突出 */
@@ -805,6 +893,12 @@ body {
   .edit-card { background: #4E342E; }
   .edit-title { color: #EFEBE9; }
   .edit-input { background: #3E2723; border-color: #5D4037; color: #EFEBE9; }
+
+  /* iOS 引导 */
+  .ios-guide-card { background: #4E342E; }
+  .ios-guide-step { color: #EFEBE9; }
+  .ios-guide-arrow { color: #8D6E63; }
+  .ios-guide-close { background: #8D6E63; }
 
   /* 浏览器引导 */
   .browser-guide-card {
