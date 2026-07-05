@@ -1,4 +1,4 @@
-const CACHE_NAME = 'twobrain-v2';
+const CACHE_NAME = 'twobrain-v3';
 const ASSETS = [
   './',
   './index.html',
@@ -9,7 +9,7 @@ const ASSETS = [
   './manifest.json'
 ];
 
-// Install: cache all app shell assets
+// Install: 预缓存 App Shell
 self.addEventListener('install', event => {
   event.waitUntil(
     caches.open(CACHE_NAME).then(cache => cache.addAll(ASSETS))
@@ -17,7 +17,7 @@ self.addEventListener('install', event => {
   self.skipWaiting();
 });
 
-// Activate: clean old caches
+// Activate: 删除旧版本缓存
 self.addEventListener('activate', event => {
   event.waitUntil(
     caches.keys().then(keys =>
@@ -27,30 +27,21 @@ self.addEventListener('activate', event => {
   self.clients.claim();
 });
 
-// Fetch: cache-first strategy for app shell, network-first for everything else
+// Fetch: 网络优先 → 失败则用缓存（自动获取最新版本，断网时离线可用）
 self.addEventListener('fetch', event => {
-  const url = new URL(event.request.url);
-
-  // For app shell assets, use cache-first
-  if (ASSETS.some(a => url.pathname.endsWith(a.replace('./', '')))) {
-    event.respondWith(
-      caches.match(event.request).then(
-        cached => cached || fetch(event.request)
-      )
-    );
-    return;
-  }
-
-  // For everything else, try network then fall back to cache
   event.respondWith(
     fetch(event.request)
       .then(response => {
+        // 网络请求成功 → 更新缓存 + 返回响应
         const clone = response.clone();
         caches.open(CACHE_NAME).then(cache =>
           cache.put(event.request, clone)
         );
         return response;
       })
-      .catch(() => caches.match(event.request))
+      .catch(() => {
+        // 网络失败 → 尝试缓存
+        return caches.match(event.request);
+      })
   );
 });
