@@ -1,4 +1,4 @@
-const CACHE_NAME = 'twobrain-v1';
+const CACHE_NAME = 'twobrain-v2';
 const ASSETS = [
   './',
   './index.html',
