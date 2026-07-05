@@ -33,58 +33,96 @@ const App = {
   // ─── 安装应用 ───────────────────────────────
 
   _setupInstallPrompt() {
-    const btn = document.getElementById('btnInstall');
-    if (!btn) return;
-
-    // 已安装则不再显示按钮
     const isStandalone = window.matchMedia('(display-mode: standalone)').matches
                       || navigator.standalone;
-    if (isStandalone) return;
+    if (isStandalone) return; // 已安装，直接跳过
 
-    // 监听 Chrome 的安装事件
+    const permanentlyDismissed = localStorage.getItem('twobrain_install_perm');
+    if (permanentlyDismissed) return; // 用户选过"已安装"
+
+    const dismissedAt = localStorage.getItem('twobrain_install_dismissed_at');
+    if (dismissedAt && (Date.now() - parseInt(dismissedAt)) < 24 * 60 * 60 * 1000) {
+      return; // 24h 内不再打扰
+    }
+
+    const btn = document.getElementById('btnInstall');
+
+    // Chrome/Edge: 捕获 beforeinstallprompt
     window.addEventListener('beforeinstallprompt', (e) => {
       e.preventDefault();
       this._installPrompt = e;
-      btn.classList.remove('hidden');
-      btn.classList.add('btn-install--pulse');
+      if (btn) btn.classList.remove('hidden'); // 显示头部安装按钮
     });
 
-    // 点击安装
-    btn.addEventListener('click', () => {
-      if (this._installPrompt) {
-        this._installPrompt.prompt();
-        this._installPrompt.userChoice.then((choice) => {
-          if (choice.outcome === 'accepted') {
-            btn.classList.add('hidden');
-            this._showToast('🎉 安装成功！');
-          }
-          this._installPrompt = null;
-        });
-        return;
-      }
-
-      // iOS 回退：显示引导
-      if (/iPhone|iPad|iPod/.test(navigator.userAgent)) {
-        this._showIosInstallGuide();
-      }
-    });
-
-    // iOS 上提前显示按钮（因为 beforeinstallprompt 不会触发）
-    if (/iPhone|iPad|iPod/.test(navigator.userAgent) && !isStandalone) {
+    // iOS: 始终显示头部按钮（无 beforeinstallprompt）
+    if (/iPhone|iPad|iPod/.test(navigator.userAgent) && btn) {
       btn.classList.remove('hidden');
-      // iOS 没有 beforeinstallprompt，点击后显示引导
     }
 
-    // 监听安装完成
+    // 头部按钮点击 → 弹出确认框
+    if (btn) {
+      btn.addEventListener('click', () => this._showInstallDialog());
+    }
+
+    // 延迟弹出确认框，给页面加载留时间
+    const delay = this.tasks.length === 0 ? 800 : 2500;
+    setTimeout(() => {
+      if (this._installPrompt || /iPhone|iPad|iPod/.test(navigator.userAgent)) {
+        this._showInstallDialog();
+      }
+    }, delay);
+
+    // 安装完成
     window.addEventListener('appinstalled', () => {
-      btn.classList.add('hidden');
+      if (btn) btn.classList.add('hidden');
       this._installPrompt = null;
       this._showToast('✅ Twobrain 已安装到桌面！');
     });
   },
 
+  /** 弹出安装确认对话框 */
+  _showInstallDialog() {
+    const overlay = document.getElementById('installDialog');
+    if (!overlay) return;
+    overlay.classList.remove('hidden');
+
+    // 立即安装
+    document.getElementById('btnInstallYes')?.addEventListener('click', () => {
+      overlay.classList.add('hidden');
+      if (this._installPrompt) {
+        // Chrome: 触发浏览器原生安装
+        this._installPrompt.prompt();
+      } else if (/iPhone|iPad|iPod/.test(navigator.userAgent)) {
+        // iOS: 显示手动引导
+        this._showIosInstallGuide();
+      } else {
+        this._showToast('📲 请点击浏览器菜单中的"安装"按钮');
+      }
+    }, { once: true });
+
+    // 暂不安装
+    document.getElementById('btnInstallNo')?.addEventListener('click', () => {
+      overlay.classList.add('hidden');
+      localStorage.setItem('twobrain_install_dismissed_at', Date.now());
+    }, { once: true });
+
+    // 我已安装
+    document.getElementById('btnInstallDone')?.addEventListener('click', () => {
+      overlay.classList.add('hidden');
+      localStorage.setItem('twobrain_install_perm', '1');
+      this._showToast('👍 已记住，不再提示');
+    }, { once: true });
+
+    // 点击遮罩关闭
+    overlay.addEventListener('click', (e) => {
+      if (e.target === overlay) {
+        overlay.classList.add('hidden');
+        localStorage.setItem('twobrain_install_dismissed_at', Date.now());
+      }
+    }, { once: true });
+  },
+
   _showIosInstallGuide() {
-    // 创建一个轻量引导 toast
     const guide = document.createElement('div');
     guide.className = 'ios-guide';
     guide.innerHTML = `
@@ -106,7 +144,6 @@ const App = {
         <button class="ios-guide-close">我知道了</button>
       </div>`;
     document.body.appendChild(guide);
-
     guide.querySelector('.ios-guide-close').onclick = () => guide.remove();
     guide.addEventListener('click', (e) => {
       if (e.target === guide) guide.remove();

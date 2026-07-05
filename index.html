@@ -25,6 +25,26 @@
     </div>
   </header>
 
+  <!-- 安装确认弹窗 -->
+  <div class="install-dialog-overlay hidden" id="installDialog">
+    <div class="install-dialog-card">
+      <div class="install-dialog-icon">📋</div>
+      <h2 class="install-dialog-title">安装 Twobrain 到桌面？</h2>
+      <p class="install-dialog-desc">
+        像原生 App 一样使用，支持离线提醒、消息通知，体验更完整。
+      </p>
+      <div class="install-dialog-actions">
+        <button id="btnInstallYes" class="btn-dialog btn-dialog--primary">
+          ✅ 立即安装
+        </button>
+        <button id="btnInstallNo" class="btn-dialog btn-dialog--ghost">
+          暂不安装
+        </button>
+      </div>
+      <button id="btnInstallDone" class="install-dialog-link">我已安装，关闭提示</button>
+    </div>
+  </div>
+
   <!-- 输入面板 -->
   <div class="input-wrapper">
     <div class="input-panel" id="inputPanel">

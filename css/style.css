@@ -529,6 +529,96 @@ body {
   }
 }
 
+/* ── Install Confirm Dialog ───────────── */
+
+.install-dialog-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 10003;
+  background: rgba(0,0,0,.55);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+  animation: overlayFadeIn 0.2s;
+}
+.install-dialog-overlay.hidden {
+  display: none;
+}
+
+.install-dialog-card {
+  background: #FFFEF9;
+  border-radius: 24px;
+  padding: 32px 24px 20px;
+  max-width: 340px;
+  width: 100%;
+  text-align: center;
+  box-shadow: 0 16px 48px rgba(0,0,0,.3);
+  animation: cardSlideUp 0.3s ease-out;
+}
+
+.install-dialog-icon {
+  font-size: 3.5rem;
+  margin-bottom: 10px;
+}
+
+.install-dialog-title {
+  font-size: 1.2rem;
+  font-weight: 700;
+  color: #3E2723;
+  margin-bottom: 8px;
+}
+
+.install-dialog-desc {
+  font-size: 0.88rem;
+  color: #5D4037;
+  line-height: 1.6;
+  margin-bottom: 24px;
+}
+
+.install-dialog-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-bottom: 16px;
+}
+
+.btn-dialog {
+  width: 100%;
+  height: 48px;
+  border: none;
+  border-radius: 24px;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.15s;
+}
+.btn-dialog:active {
+  transform: scale(0.97);
+}
+.btn-dialog--primary {
+  background: #4E342E;
+  color: #FFF;
+  box-shadow: 0 4px 12px rgba(78,52,46,.3);
+}
+.btn-dialog--ghost {
+  background: transparent;
+  color: #795548;
+  border: 1.5px solid #D7CCC8;
+}
+
+.install-dialog-link {
+  background: none;
+  border: none;
+  color: #A1887F;
+  font-size: 0.82rem;
+  cursor: pointer;
+  text-decoration: underline;
+  padding: 8px;
+}
+
 /* ── iOS Install Guide ────────────────── */
 
 .ios-guide {
@@ -899,6 +989,14 @@ body {
   .ios-guide-step { color: #EFEBE9; }
   .ios-guide-arrow { color: #8D6E63; }
   .ios-guide-close { background: #8D6E63; }
+
+  /* 安装确认 */
+  .install-dialog-card { background: #4E342E; }
+  .install-dialog-title { color: #EFEBE9; }
+  .install-dialog-desc { color: #BCAAA4; }
+  .install-dialog-link { color: #8D6E63; }
+  .btn-dialog--primary { background: #8D6E63; }
+  .btn-dialog--ghost { color: #BCAAA4; border-color: #5D4037; }
 
   /* 浏览器引导 */
   .browser-guide-card {
