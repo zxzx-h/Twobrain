@@ -2,21 +2,25 @@
   "name": "Twobrain - 便利贴待办",
   "short_name": "Twobrain",
   "description": "一款按时间排列、自动提醒的便利贴型待办软件",
-  "start_url": "./index.html",
+  "start_url": "/Twobrain/",
+  "scope": "/Twobrain/",
+  "id": "/Twobrain/",
   "display": "standalone",
   "orientation": "any",
   "background_color": "#F5F0E8",
   "theme_color": "#FFF9C4",
   "icons": [
     {
-      "src": "img/icon-192.png",
+      "src": "/Twobrain/img/icon-192.png",
       "sizes": "192x192",
-      "type": "image/png"
+      "type": "image/png",
+      "purpose": "any"
     },
     {
-      "src": "img/icon-512.png",
+      "src": "/Twobrain/img/icon-512.png",
       "sizes": "512x512",
-      "type": "image/png"
+      "type": "image/png",
+      "purpose": "any maskable"
     }
   ]
 }

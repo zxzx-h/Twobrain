@@ -562,7 +562,9 @@ const App = {
 
   _registerSW() {
     if ('serviceWorker' in navigator) {
-      navigator.serviceWorker.register('./sw.js').catch(() => {});
+      navigator.serviceWorker.register('/Twobrain/sw.js', { scope: '/Twobrain/' })
+        .then(reg => console.log('SW 已注册:', reg.scope))
+        .catch(err => console.warn('SW 注册失败:', err));
     }
   }
 };
