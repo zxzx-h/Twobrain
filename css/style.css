@@ -184,16 +184,16 @@ body {
 }
 
 .input-time {
+  width: 112px;
+  flex-shrink: 0;
   height: 44px;
   border: 1.5px solid #E0E0E0;
   border-radius: 10px;
-  padding: 0 10px;
-  font-size: 0.9rem;
+  padding: 0 8px;
+  font-size: 0.82rem;
   color: var(--text);
   background: #FFFEF9;
   outline: none;
-  flex-shrink: 0;
-  min-width: 0;
 }
 .input-time:focus {
   border-color: #FDD835;
