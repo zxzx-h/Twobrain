@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, user-scalable=no">
+  <meta name="theme-color" content="#FFF9C4">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="Twobrain">
+  <link rel="manifest" href="./manifest.json">
+  <link rel="apple-touch-icon" href="./img/icon-192.png">
+  <title>Twobrain - 便利贴待办</title>
+  <link rel="stylesheet" href="./css/style.css">
+</head>
+<body>
+
+  <!-- 顶部栏 -->
+  <header class="header">
+    <h1 class="logo">📋 Twobrain</h1>
+    <div class="header-actions">
+      <button id="btnImport" class="btn-icon" title="导入备份">📥</button>
+      <button id="btnExport" class="btn-icon" title="导出备份">📤</button>
+      <input type="file" id="fileImport" accept=".json" hidden>
+    </div>
+  </header>
+
+  <!-- 输入面板 -->
+  <div class="input-wrapper">
+    <div class="input-panel" id="inputPanel">
+      <div class="input-row">
+        <input
+          type="text"
+          id="inputTitle"
+          class="input-title"
+          placeholder="输入新的待办事项…"
+          autocomplete="off"
+          maxlength="200"
+        >
+        <input
+          type="datetime-local"
+          id="inputTime"
+          class="input-time"
+        >
+      </div>
+      <div class="input-row input-row--bottom">
+        <div class="color-picker">
+          <span class="color-dot selected" data-color="yellow" style="background:#FFF9C4"></span>
+          <span class="color-dot" data-color="pink" style="background:#F8BBD0"></span>
+          <span class="color-dot" data-color="green" style="background:#C8E6C9"></span>
+          <span class="color-dot" data-color="blue" style="background:#BBDEFB"></span>
+          <span class="color-dot" data-color="purple" style="background:#E1BEE7"></span>
+        </div>
+        <button id="btnAdd" class="btn-add">＋ 添加</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- 编辑弹窗 -->
+  <div class="edit-overlay hidden" id="editOverlay">
+    <div class="edit-card">
+      <h3 class="edit-title">✏️ 编辑待办</h3>
+      <input type="text" id="editTitle" class="edit-input" placeholder="待办标题" maxlength="200">
+      <input type="datetime-local" id="editTime" class="edit-input">
+      <div class="edit-colors" id="editColors">
+        <span class="color-dot" data-color="yellow" style="background:#FFF9C4"></span>
+        <span class="color-dot" data-color="pink" style="background:#F8BBD0"></span>
+        <span class="color-dot" data-color="green" style="background:#C8E6C9"></span>
+        <span class="color-dot" data-color="blue" style="background:#BBDEFB"></span>
+        <span class="color-dot" data-color="purple" style="background:#E1BEE7"></span>
+      </div>
+      <div class="edit-actions">
+        <button id="btnEditCancel" class="btn-guide btn-guide--ghost">取消</button>
+        <button id="btnEditSave" class="btn-guide btn-guide--primary">保存</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- 浏览器引导弹窗（内嵌浏览器中显示） -->
+  <div class="browser-guide-overlay hidden" id="browserGuide">
+    <div class="browser-guide-card">
+      <button class="browser-guide-close" id="btnGuideClose">×</button>
+      <div class="browser-guide-icon">📋</div>
+      <h2 class="browser-guide-title">在浏览器中打开 Twobrain</h2>
+      <p class="browser-guide-desc">
+        当前在内嵌浏览器中，部分功能可能受限。<br>
+        扫描下方二维码，在系统默认浏览器中打开，获得完整 App 体验：
+      </p>
+      <div class="browser-guide-qr">
+        <img id="qrImage"
+             src=""
+             alt="扫码在浏览器中打开"
+             width="180" height="180">
+      </div>
+      <div class="browser-guide-actions">
+        <button id="btnCopyLink" class="btn-guide btn-guide--primary">
+          📋 复制链接
+        </button>
+        <button id="btnGuideDismiss" class="btn-guide btn-guide--ghost">
+          暂不需要
+        </button>
+      </div>
+      <p class="browser-guide-tip">
+        提示：用手机相机扫一扫二维码即可打开
+      </p>
+    </div>
+  </div>
+
+  <!-- PWA 安装提示（系统浏览器中显示） -->
+  <div class="install-banner" id="installBanner">
+    <div class="install-banner-inner">
+      <span class="install-banner-icon">📌</span>
+      <span class="install-banner-text">添加到主屏幕，像 App 一样使用</span>
+      <button id="btnInstallDismiss" class="install-banner-close">×</button>
+    </div>
+  </div>
+
+  <!-- 便利贴面板 -->
+  <main class="board" id="taskBoard">
+    <!-- JS 动态渲染 -->
+  </main>
+
+  <!-- Toast 容器 -->
+  <div class="toast-container" id="toastContainer"></div>
+
+  <!-- 脚本 -->
+  <script src="./js/storage.js"></script>
+  <script src="./js/reminder.js"></script>
+  <script src="./js/app.js"></script>
+</body>
+</html>
